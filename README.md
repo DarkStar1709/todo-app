@@ -33,7 +33,7 @@ A simple ToDo app built with Flutter and Firebase. The app allows users to:
 - **Firebase CLI**: For Firebase configuration.
 
 ## Folder Structure
-
+```
 lib/
  ├── bloc/
  │   ├── auth/
@@ -58,6 +58,7 @@ lib/
  │   ├── widgets/
  │   │   ├── task_tile.dart
  └── main.dart
+```
 
 
  https://github.com/user-attachments/assets/c84a337a-1786-4c55-8588-462302654b1c
