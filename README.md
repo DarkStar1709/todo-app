@@ -32,6 +32,37 @@ A simple ToDo app built with Flutter and Firebase. The app allows users to:
 - **go_router**: For routing.
 - **Firebase CLI**: For Firebase configuration.
 
+  ## 🧩 Task Queueing Logic
+
+The `TaskQueue` class manages a **delayed, retryable task queue** for uploading tasks to Firebase.  
+This is useful when you want to handle intermittent network conditions or ensure tasks are uploaded in sequence.
+
+### 🔄 How It Works
+
+#### ✅ Task Addition
+- When a task is added using `addTask(Task task)`, it is appended to an internal `Queue<Task>`.
+- The queue broadcasts its updated state through a stream (`queuedTasks`) for UI or logs.
+
+#### ▶️ Automatic Processing
+- If the queue isn't already processing, the `_startProcessing()` method kicks off the first upload.
+- A new task is processed **every 5 seconds** (`_processingDelay`), one at a time.
+
+#### 🚀 Task Execution
+- The task at the front of the queue is dequeued and sent to Firebase via `addTask`.
+- If the upload succeeds, its status is updated to `uploaded`.
+
+#### 🔁 Retry Mechanism
+- If the upload fails, the task’s `retryCount` is checked:
+  - If below the retry limit (`_maxRetries = 3`), the task is re-queued at the front with `status: failed` and `retryCount` incremented.
+  - Otherwise, it's marked as permanently `failed` using the task’s `id`.
+
+#### 🔔 Real-Time Updates
+- All queue changes are pushed to subscribers using `_queuedTasksController.stream`, enabling real-time UI updates.
+
+#### 🧹 Cleanup
+- Use `dispose()` to cancel the timer and close the stream when the queue is no longer needed.
+
+
 ## Folder Structure
 ```
 lib/
